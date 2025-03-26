@@ -1,0 +1,125 @@
+@page "/produtos"
+@inject HttpClient Http
+
+<style>
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        padding: 2rem;
+    }
+
+    .product-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+    }
+
+        .product-card:hover {
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+    .product-image {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        max-height: 200px;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .product-info {
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .product-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .product-price {
+        font-size: 1.5rem;
+        color: #1e40af;
+        font-weight: bold;
+    }
+
+    .add-to-cart {
+        background: #1e40af;
+        color: white;
+        padding: 0.75rem;
+        border-radius: 5px;
+        text-align: center;
+        margin-top: auto;
+        transition: background 0.3s;
+        width: 100%;
+    }
+
+        .add-to-cart:hover {
+            background: #1e3a0a;
+        }
+
+    .add-product-button {
+        background: #1e40af;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 5px;
+        text-align: center;
+        margin-bottom: 1rem;
+        transition: background 0.3s;
+        display: inline-block;
+    }
+
+        .add-product-button:hover {
+            background: #1e3a0a;
+        }
+</style>
+
+<h2 class="text-2xl font-bold text-center my-6">Lista de Produtos</h2>
+<AuthorizeView Roles="admin">
+    <div class="text-center">
+        <button class="add-product-button">Adicionar Novo Produto</button>
+    </div>
+</AuthorizeView>
+
+<div class="product-grid">
+    @foreach (var product in products)
+    {
+        <div class="product-card">
+            <img src="@product.Image" alt="@product.Title" class="product-image" />
+            <div class="product-info">
+                <h4 class="product-title">@(product.Title.Length > 50 ? product.Title.Substring(0, 50) + "..." : product.Title)</h4>
+
+                <div class="flex items-center mt-2">
+                    <span class="text-yellow-500 text-lg">⭐</span>
+                    <span class="ml-1 text-sm">@product.Rating.Rate (@product.Rating.Count avaliações)</span>
+                </div>
+                <p class="product-price">$@product.Price</p>
+                <button class="add-to-cart">Adicionar ao Carrinho</button>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+@code {
+    private List<Product> products = new();
+   
+
+    protected override async Task OnInitializedAsync()
+    {
+        products = await Http.GetFromJsonAsync<List<Product>>("https://fakestoreapi.com/products") ?? new();
+    }
+
+   
+}
