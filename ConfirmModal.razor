@@ -1,0 +1,43 @@
+<div class="modal fade show" tabindex="-1" style="display: block;" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmação de @TituloHeader</h5>
+                <button type="button" class="btn-close" @onclick="() => Confirm(false)"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja @MensagemConfirmação?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="() => Confirm(false)">Cancelar</button>
+                <button type="button" class="btn btn-danger" @onclick="() => Confirm(true)">@TituloBtnConfirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal {
+        display: block;
+        background: rgba(0, 0, 0, 0.5);
+    }
+</style>
+
+@code {
+    [Parameter]
+    public EventCallback<bool> OnConfirm { get; set; }
+
+    [Parameter]
+    public string TituloHeader { get; set; }
+
+    [Parameter]
+    public string TituloBtnConfirm { get; set; }
+    
+    [Parameter]
+    public string MensagemConfirmação { get; set; }
+
+    private async Task Confirm(bool confirmed)
+    {
+        await OnConfirm.InvokeAsync(confirmed);
+    }
+}
